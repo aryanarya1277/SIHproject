@@ -1,0 +1,4 @@
+*.joblib
+!disaster_detection.joblib
+!event_type.joblib
+.env

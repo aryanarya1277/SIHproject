@@ -1,0 +1,213 @@
+{
+  "task": "event_type",
+  "description": "Social-media label classification into non-disaster, flood, or earthquake.",
+  "source": "Mendeley Data 10.17632/psv6b4zy9f.1",
+  "license": "CC BY 4.0",
+  "random_seed": 42,
+  "trained_at": "2026-09-27T11:11:35.919389+00:00",
+  "temporal_evaluation": {
+    "available": false,
+    "reason": "The Mendeley tweet files used in this task have no usable event-date field."
+  },
+  "regional_holdout_evaluation": {
+    "available": true,
+    "method": "Leave-one-source-region-out; all tweets from each held-out region are excluded from training.",
+    "region_results": {
+      "india": {
+        "train_regions": [
+          "nepal"
+        ],
+        "test_region": "india",
+        "train_rows": 12871,
+        "test_rows": 13600,
+        "accuracy": 0.7052205882352941,
+        "macro_f1": 0.6918668725373734,
+        "classes": [
+          "Earthquake",
+          "Flood",
+          "non_disaster"
+        ],
+        "classification_report": {
+          "Earthquake": {
+            "precision": 0.7323636363636363,
+            "recall": 0.7898039215686274,
+            "f1-score": 0.76,
+            "support": 5100.0
+          },
+          "Flood": {
+            "precision": 0.8356510745891277,
+            "recall": 0.4611627906976744,
+            "f1-score": 0.5943353813876817,
+            "support": 4300.0
+          },
+          "non_disaster": {
+            "precision": 0.6251091321808975,
+            "recall": 0.8523809523809524,
+            "f1-score": 0.7212652362244384,
+            "support": 4200.0
+          },
+          "accuracy": 0.7052205882352941,
+          "macro avg": {
+            "precision": 0.7310412810445538,
+            "recall": 0.7011158882157514,
+            "f1-score": 0.6918668725373734,
+            "support": 13600.0
+          },
+          "weighted avg": {
+            "precision": 0.7318979795108502,
+            "recall": 0.7052205882352941,
+            "f1-score": 0.6956585391257112,
+            "support": 13600.0
+          }
+        },
+        "confusion_matrix": [
+          [
+            4028,
+            73,
+            999
+          ],
+          [
+            1169,
+            1983,
+            1148
+          ],
+          [
+            303,
+            317,
+            3580
+          ]
+        ]
+      },
+      "nepal": {
+        "train_regions": [
+          "india"
+        ],
+        "test_region": "nepal",
+        "train_rows": 13600,
+        "test_rows": 12871,
+        "accuracy": 0.6729857819905213,
+        "macro_f1": 0.6527385266600908,
+        "classes": [
+          "Earthquake",
+          "Flood",
+          "non_disaster"
+        ],
+        "classification_report": {
+          "Earthquake": {
+            "precision": 0.6724934989887316,
+            "recall": 0.8479052823315119,
+            "f1-score": 0.750080567193039,
+            "support": 5490.0
+          },
+          "Flood": {
+            "precision": 0.6207171314741036,
+            "recall": 0.8547915142648135,
+            "f1-score": 0.7191875673180489,
+            "support": 2734.0
+          },
+          "non_disaster": {
+            "precision": 0.7646520146520146,
+            "recall": 0.35937163761566604,
+            "f1-score": 0.4889474454691846,
+            "support": 4647.0
+          },
+          "accuracy": 0.6729857819905213,
+          "macro avg": {
+            "precision": 0.6859542150382832,
+            "recall": 0.6873561447373304,
+            "f1-score": 0.6527385266600908,
+            "support": 12871.0
+          },
+          "weighted avg": {
+            "precision": 0.6947686938844104,
+            "recall": 0.6729857819905213,
+            "f1-score": 0.6492378138476133,
+            "support": 12871.0
+          }
+        },
+        "confusion_matrix": [
+          [
+            4655,
+            541,
+            294
+          ],
+          [
+            177,
+            2337,
+            220
+          ],
+          [
+            2090,
+            887,
+            1670
+          ]
+        ]
+      }
+    }
+  },
+  "accuracy": 0.9611027190332326,
+  "classification_report": {
+    "Earthquake": {
+      "precision": 0.9574074074074074,
+      "recall": 0.9763928234183191,
+      "f1-score": 0.9668069191210846,
+      "support": 1059.0
+    },
+    "Flood": {
+      "precision": 0.9926470588235294,
+      "recall": 0.9588068181818182,
+      "f1-score": 0.9754335260115607,
+      "support": 704.0
+    },
+    "non_disaster": {
+      "precision": 0.9414414414414415,
+      "recall": 0.9446327683615819,
+      "f1-score": 0.943034404963339,
+      "support": 885.0
+    },
+    "accuracy": 0.9611027190332326,
+    "macro avg": {
+      "precision": 0.9638319692241261,
+      "recall": 0.9599441366539064,
+      "f1-score": 0.9617582833653282,
+      "support": 2648.0
+    },
+    "weighted avg": {
+      "precision": 0.9614401999742768,
+      "recall": 0.9611027190332326,
+      "f1-score": 0.9611552787212698,
+      "support": 2648.0
+    }
+  },
+  "confusion_matrix": [
+    [
+      1034,
+      1,
+      24
+    ],
+    [
+      1,
+      675,
+      28
+    ],
+    [
+      45,
+      4,
+      836
+    ]
+  ],
+  "validation_accuracy": 0.9588213071401587,
+  "classes": [
+    "Earthquake",
+    "Flood",
+    "non_disaster"
+  ],
+  "train_class_counts": {
+    "non_disaster": 7077,
+    "Flood": 5627,
+    "Earthquake": 8472
+  },
+  "train_rows": 21176,
+  "validation_rows": 2647,
+  "test_rows": 2648
+}

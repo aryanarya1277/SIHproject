@@ -1,0 +1,108 @@
+{
+  "available": true,
+  "method": "Leave-one-source-region-out; all tweets from each held-out region are excluded from training.",
+  "region_results": {
+    "india": {
+      "train_regions": [
+        "nepal"
+      ],
+      "test_region": "india",
+      "train_rows": 33280,
+      "test_rows": 16998,
+      "accuracy": 0.8323920461230733,
+      "macro_f1": 0.8322911132731283,
+      "classes": [
+        "disaster",
+        "non_disaster"
+      ],
+      "classification_report": {
+        "disaster": {
+          "precision": 0.9561507155047919,
+          "recall": 0.7433149622371913,
+          "f1-score": 0.8364053976457078,
+          "support": 9798.0
+        },
+        "non_disaster": {
+          "precision": 0.7319049141882529,
+          "recall": 0.9536111111111111,
+          "f1-score": 0.8281768289005488,
+          "support": 7200.0
+        },
+        "accuracy": 0.8323920461230733,
+        "macro avg": {
+          "precision": 0.8440278148465223,
+          "recall": 0.8484630366741512,
+          "f1-score": 0.8322911132731283,
+          "support": 16998.0
+        },
+        "weighted avg": {
+          "precision": 0.8611648483745953,
+          "recall": 0.8323920461230733,
+          "f1-score": 0.8329199467123541,
+          "support": 16998.0
+        }
+      },
+      "confusion_matrix": [
+        [
+          7283,
+          2515
+        ],
+        [
+          334,
+          6866
+        ]
+      ]
+    },
+    "nepal": {
+      "train_regions": [
+        "india"
+      ],
+      "test_region": "nepal",
+      "train_rows": 16998,
+      "test_rows": 33280,
+      "accuracy": 0.5921274038461538,
+      "macro_f1": 0.5191633466210094,
+      "classes": [
+        "disaster",
+        "non_disaster"
+      ],
+      "classification_report": {
+        "disaster": {
+          "precision": 0.5978698484737575,
+          "recall": 0.8632808371208117,
+          "f1-score": 0.7064700285442436,
+          "support": 18922.0
+        },
+        "non_disaster": {
+          "precision": 0.5657938905673044,
+          "recall": 0.23478200306449365,
+          "f1-score": 0.33185666469777514,
+          "support": 14358.0
+        },
+        "accuracy": 0.5921274038461538,
+        "macro avg": {
+          "precision": 0.5818318695205309,
+          "recall": 0.5490314200926527,
+          "f1-score": 0.5191633466210094,
+          "support": 33280.0
+        },
+        "weighted avg": {
+          "precision": 0.5840313087014962,
+          "recall": 0.5921274038461538,
+          "f1-score": 0.5448504769184145,
+          "support": 33280.0
+        }
+      },
+      "confusion_matrix": [
+        [
+          16335,
+          2587
+        ],
+        [
+          10987,
+          3371
+        ]
+      ]
+    }
+  }
+}

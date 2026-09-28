@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:,">
+    <title>National Weather Intelligence Platform</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+</head>
+<body>
+    <nav id="navbar">
+        <div id="name">
+       
+        <i id="rain" class="fa-solid fa-cloud-sun" aria-hidden="true"></i>
+        
+        <!-- <i id="rain" class="fa-solid fa-cloud-rain"></i> -->
+        <p>national weather intelligence platform </p>
+        </div>
+        
+        <div id="icon">
+        <i id="live-location" class="fa-brands fa-periscope"></i>
+        <i id="bell" class="fa-solid fa-bell"></i>
+        </div>
+
+    </nav>
+
+    <main>
+         <section id="sidebar">
+            <div class="options1" data-target="#summary-cards" role="button" tabindex="0">
+                <i class="fa-solid fa-house"></i>
+                <p>Dashboard</p>
+            </div>
+
+            <div class="options2" data-target="#map" role="button" tabindex="0">
+               <i class="fa-solid fa-map"></i>
+               <p>Live Map</p>
+            </div>
+
+            <div class="options3" data-target="#reports-panel" role="button" tabindex="0">
+               <i class="fa-solid fa-file-lines"></i>
+               <p>Reports</p>
+            </div>
+
+           <div class="options4" data-target="#analytics-panel" role="button" tabindex="0">
+               <i class="fa-brands fa-think-peaks"></i>
+               <p>Analytics</p>
+            </div>
+
+            <div class="options5" data-target="#alerts-panel" role="button" tabindex="0">
+               <i class="fa-solid fa-triangle-exclamation"></i>
+               <p>Alert</p>
+            </div>
+
+        </section>
+
+        <p id="sample-data-notice" role="status" hidden>
+            Dashboard totals and analytics include labelled sample records; these are not live reports.
+        </p>
+
+        <section id="summary-cards">
+            <div class="summary-card1">
+                <p>total reports</p>
+                <p data-metric="total_reports">—</p>
+            </div>
+            <div class="summary-card2">
+                <p>verified reports</p>
+                <p data-metric="verified_reports">—</p>
+            </div>
+            <div class="summary-card3">
+                <p>Suspicious Reports</p>
+                <p data-metric="suspicious_reports">—</p>
+            </div>
+            <div class="summary-card4">
+                <p>Active-Alerts</p>
+                <p data-metric="active_alerts">—</p>
+            </div>
+        </section>
+        <p id="summary-error" class="error-message" role="status" hidden></p>
+
+        
+
+        <section class="weather-map">
+
+
+           <div class="map-heading">
+               <h2 id="map-heading">India Weather Map</h2>
+               <div class="map-scope-switch" role="group" aria-label="Map area">
+                   <button id="india-map-button" type="button" aria-pressed="true">India Map</button>
+                   <button id="world-map-button" type="button" aria-pressed="false">World Map</button>
+               </div>
+           </div>
+
+           <div class="map-container">  
+               <div id="map"></div>
+            </div>
+            <p id="map-location-status" class="map-location-status" aria-live="polite">
+                Tap a city marker to see current weather, fog/visibility, a five-day forecast, and recent nearby earthquakes.
+            </p>
+
+            <div class="live-weather">
+                <h3>Live weather conditions</h3>
+                <form id="live-weather-form">
+                    <label>Latitude<input name="latitude" type="number" min="-90" max="90" step="any" value="22.5" required></label>
+                    <label>Longitude<input name="longitude" type="number" min="-180" max="180" step="any" value="78.9" required></label>
+                    <button type="submit">Get live weather</button>
+                </form>
+                <p class="live-weather-result" aria-live="polite">Choose coordinates to check current conditions.</p>
+                <small>Weather sources: <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a>; <a href="https://api.met.no/weatherapi/locationforecast/2.0/documentation" target="_blank" rel="noopener noreferrer">MET Norway fallback</a> when Open-Meteo is unavailable.</small>
+            </div>
+
+            <section class="live-data-grid">
+                <div class="weather-observations-panel">
+                    <div class="live-panel-heading">
+                        <h3>Weather across India</h3>
+                        <button id="refresh-weather" type="button">Refresh</button>
+                    </div>
+                    <p id="weather-feed-status" class="feed-status" aria-live="polite">Loading observations…</p>
+                    <div id="india-weather-grid" class="india-weather-grid" aria-live="polite"></div>
+                    <small>Source: <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a>. City-point observations, not nationwide coverage or official warnings.</small>
+                </div>
+                <div class="earthquake-panel">
+                    <div class="live-panel-heading">
+                        <h3>Recent earthquakes in India</h3>
+                        <label>Minimum magnitude
+                            <select id="earthquake-minimum-magnitude">
+                                <option value="0">All</option>
+                                <option value="2.5">2.5+</option>
+                                <option value="4">4.0+</option>
+                            </select>
+                        </label>
+                    </div>
+                    <p id="earthquake-feed-status" class="feed-status" aria-live="polite">Loading USGS query…</p>
+                    <div id="earthquake-list" class="earthquake-list" aria-live="polite"></div>
+                    <small>Source: <a href="https://earthquake.usgs.gov/fdsnws/event/1/" target="_blank" rel="noopener noreferrer">USGS FDSN Event API</a> (India-region query, last 24 hours). Events are source-reported, not independently verified here.</small>
+                </div>
+            </section>
+            <section class="nasa-power-panel">
+                <div class="live-panel-heading">
+                    <h3>NASA POWER daily weather context</h3>
+                    <small>Daily gridded data · not real-time station readings</small>
+                </div>
+                <form id="nasa-power-form" class="nasa-power-form">
+                    <label>Location
+                        <select name="city" required>
+                            <option value="Delhi">Delhi</option>
+                            <option value="Mumbai">Mumbai</option>
+                            <option value="Kolkata">Kolkata</option>
+                            <option value="Chennai">Chennai</option>
+                            <option value="Bengaluru">Bengaluru</option>
+                            <option value="Guwahati">Guwahati</option>
+                            <option value="Jaipur">Jaipur</option>
+                            <option value="Patna">Patna</option>
+                        </select>
+                    </label>
+                    <label>From<input name="start_date" type="date" required></label>
+                    <label>To<input name="end_date" type="date" required></label>
+                    <button type="submit">Load daily context</button>
+                </form>
+                <p id="nasa-power-status" class="feed-status" aria-live="polite">Choose a date range to request NASA POWER data (up to 31 days).</p>
+                <div id="nasa-power-results" class="nasa-power-results" aria-live="polite"></div>
+                <small>
+                    Source: <a href="https://power.larc.nasa.gov/docs/tutorials/service-data-request/api/" target="_blank" rel="noopener noreferrer">NASA POWER Daily API</a>.
+                    Missing/near-real-time fill values are shown as unavailable; these data are contextual evidence only.
+                </small>
+            </section>
+            <div class="map-legend" aria-label="Map marker legend">
+                <span><i class="legend-dot report-dot"></i> Citizen reports</span>
+                <span><i class="legend-dot weather-dot"></i> Weather observations</span>
+                <span><i class="legend-dot earthquake-dot"></i> USGS earthquakes</span>
+            </div>
+
+        </section>
+
+
+        <section class="events-column">
+
+            <!-- Recent Weather Events -->
+        <section class="recent-events">
+
+
+
+            <div class="recent-events-header">
+
+
+                <div class="title">
+
+                    <i class="fa-solid fa-location-dot"></i>
+                    <h2>Recent Weather Events</h2>
+                </div>
+
+                <a href="#reports-panel">View All →</a>
+            </div>
+
+
+            <div class="event-filters">
+                <label>Event
+                    <select id="event-filter">
+                        <option value="">All events</option>
+                        <option>Rain</option>
+                        <option>Flood</option>
+                        <option>Heatwave</option>
+                        <option>Thunderstorm</option>
+                        <option>Fog</option>
+                        <option>Dust Storm</option>
+                    </select>
+                </label>
+                <label>Status
+                    <select id="status-filter">
+                        <option value="">All statuses</option>
+                        <option>Verified</option>
+                        <option>Review</option>
+                        <option>Suspicious</option>
+                    </select>
+                </label>
+                <label>State
+                    <input id="state-filter" type="search" placeholder="All states">
+                </label>
+                <label>Location
+                    <input id="location-filter" type="search" placeholder="Any location">
+                </label>
+                <label>From
+                    <input id="from-date-filter" type="date">
+                </label>
+                <label>To
+                    <input id="to-date-filter" type="date">
+                </label>
+                <button id="apply-filters" type="button">Apply</button>
+            </div>
+            <p class="event-data-notice">
+                Matching reports with coordinates also load current Open-Meteo conditions and USGS earthquakes
+                within 200 km from the last 30 days. Provider data is context only, not report verification.
+            </p>
+            <div class="events-list" aria-live="polite">
+                <p class="loading-message">Loading reports…</p>
+            </div>
+
+            <details class="report-form">
+                <summary>Submit a weather report</summary>
+                <form id="new-report-form">
+                    <label>Location<input name="location" required maxlength="120"></label>
+                    <label>State<input name="state" required maxlength="80"></label>
+                    <label class="description-field">Report details
+                        <textarea name="description" rows="3" maxlength="2000" placeholder="Describe what was observed"></textarea>
+                    </label>
+                    <label>Event
+                        <select name="event" required>
+                            <option>Rain</option>
+                            <option>Flood</option>
+                            <option>Heatwave</option>
+                            <option>Thunderstorm</option>
+                            <option>Fog</option>
+                            <option>Dust Storm</option>
+                        </select>
+                    </label>
+                    <label>Date and time<input name="time" type="datetime-local" required></label>
+                    <label>Severity
+                        <select name="severity">
+                            <option value="low">Low</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="high">High</option>
+                            <option value="critical">Critical</option>
+                        </select>
+                    </label>
+                    <label>Latitude<input name="latitude" type="number" min="-90" max="90" step="any" required></label>
+                    <label>Longitude<input name="longitude" type="number" min="-180" max="180" step="any" required></label>
+                    <button type="submit">Submit report</button>
+                    <p class="form-message" aria-live="polite"></p>
+                </form>
+            </details>
+
+        </section>
+        <section class="analytics-panel" id="analytics-panel">
+            <h2>Event Type Distribution</h2>
+            <div class="distribution-list" aria-live="polite">Loading analytics…</div>
+        </section>
+        <section class="alerts-panel" id="alerts-panel">
+            <h2>Active Alerts</h2>
+            <div class="alerts-list" aria-live="polite">Loading alerts…</div>
+        </section>
+        </section>
+        <section class="reports-panel" id="reports-panel">
+            <h2>Recent Reports</h2>
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr><th>Location</th><th>Event</th><th>Time</th><th>Source</th><th>Status</th><th>Confidence</th><th>AI text signal</th></tr>
+                    </thead>
+                    <tbody class="reports-table-body">
+                        <tr><td colspan="7">Loading reports…</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+
+
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

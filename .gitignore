@@ -1,0 +1,46 @@
+.venv/
+.venv-1/
+venv/
+venv-*/
+__pycache__/
+*.pyc
+*.py[cod]
+
+# Local databases and SQLite sidecar files
+*.db
+*.sqlite
+*.sqlite3
+*.sqlite-*
+
+# Environment files and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+secrets.*
+credentials.*
+
+# Local/editor and temporary output
+.vscode/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.log
+*.tmp
+*.bak
+
+# Regenerable data-processing outputs
+datasets/processed/*.csv
+
+# Raw sources not consumed by the current preprocessing/model pipeline
+datasets/raw/flood/India_Flood_Inventory_v3.csv
+datasets/raw/social/disaster_tweets.zip
+datasets/raw/social/source_files/dataset/INDIANEARTHQUAKE.csv
+datasets/raw/social/source_files/dataset/INDIANFLOOD.csv
+datasets/raw/social/source_files/dataset/NEPALEARTHQUAKE.csv
+datasets/raw/flood/DFSI.csv
+datasets/raw/flood/District_FloodImpact.csv
+datasets/raw/flood/District_FloodedArea.csv
