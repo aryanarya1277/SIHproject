@@ -223,21 +223,25 @@ Browser → Render Static Site → Render FastAPI Web Service → Neon PostgreSQ
 ```
 
 [render.yaml](./render.yaml) defines the Render static site and API web service.
-The static-site build publishes only the dashboard assets (not the backend,
-datasets, local database, or environment files) and generates its API base URL
-from the API service host. The API permits local Live Server origins plus the
-exact production origins supplied in `FRONTEND_ORIGINS`.
+The existing Render API service is named `SIHproject`; the Blueprint adds only
+the static frontend and reads the API host from that existing service. The
+static-site build publishes only the dashboard assets (not the backend,
+datasets, local database, or environment files). The API permits local Live
+Server origins plus the exact production origins supplied in
+`FRONTEND_ORIGINS`.
 
 ### First deployment
 
 1. Create a Render Blueprint from this repository using
-   [render.yaml](./render.yaml). It creates `sihproject-api` and
-   `sihproject-frontend`.
-2. In the [Neon Console](https://console.neon.tech/), create a PostgreSQL
-   project and copy its pooled connection string including `sslmode=require`.
-   Set that value as the API service's secret `DATABASE_URL`; never commit it
-   or put it in a public file.
-3. Set the API service's `FRONTEND_ORIGINS` to the exact static-site origin
+   [render.yaml](./render.yaml), in the workspace containing the existing
+   `SIHproject` API service. It creates `sihproject-frontend` and does not
+   create a duplicate API service.
+2. Keep the existing API service's Neon connection in its secret
+   `DATABASE_URL`; if it is not configured, create a PostgreSQL project in the
+   [Neon Console](https://console.neon.tech/) and set its pooled connection
+   string, including `sslmode=require`, directly in Render. Never commit the
+   connection string or put it in a public file.
+3. Set the existing API service's `FRONTEND_ORIGINS` to the exact static-site origin
    shown in Render (for example, `https://sihproject-frontend.onrender.com`).
    For multiple domains, separate origins with commas. Do not include paths or
    use a wildcard. Redeploy the API service after changing this setting.
@@ -250,9 +254,8 @@ service may sleep while idle; the first request after inactivity can take
 longer. Neon hosts the database separately and persists it across web-service
 restarts.
 
-The existing single-service deployment at
-<https://sihproject-fbr0.onrender.com/> remains unchanged until the new
-Blueprint services are created and verified. The trained classifier artifacts
+The existing API is at <https://sihproject-fbr0.onrender.com/>. It remains the
+API service while the static frontend is created and verified. The trained classifier artifacts
 are not included in the repository by default. Other dashboard features can
 deploy without them, but `/api/classify` requires generated model files under
 `datasets/models/`; make those artifacts available to the API build if needed.
