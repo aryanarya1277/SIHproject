@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: sihproject-api
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: FRONTEND_ORIGINS
+        sync: false
+      - key: PYTHON_VERSION
+        value: 3.12.3
+  - type: web
+    name: sihproject-frontend
+    runtime: static
+    plan: free
+    buildCommand: python build_frontend.py
+    staticPublishPath: .render-frontend
+    envVars:
+      - key: API_BASE_URL
+        fromService:
+          type: web
+          name: sihproject-api
+          property: host

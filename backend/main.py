@@ -31,6 +31,11 @@ else:
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 load_dotenv(PROJECT_ROOT / ".env", override=False)
 DATABASE_URL = os.getenv("DATABASE_URL", "")
+FRONTEND_ORIGINS = [
+    origin.strip().rstrip("/")
+    for origin in os.getenv("FRONTEND_ORIGINS", "").split(",")
+    if origin.strip()
+]
 EVENT_TYPES = {
     "Rain": ("rain", "fa-cloud-rain"),
     "Flood": ("flood", "fa-water"),
@@ -459,6 +464,7 @@ app.add_middleware(
     allow_origins=[
         "http://127.0.0.1:5500",
         "http://localhost:5500",
+        *FRONTEND_ORIGINS,
     ],
     allow_credentials=False,
     allow_methods=["GET", "POST", "OPTIONS"],
@@ -479,6 +485,11 @@ def stylesheet() -> FileResponse:
 @app.get("/script.js", include_in_schema=False)
 def dashboard_script() -> FileResponse:
     return FileResponse(PROJECT_ROOT / "script.js", media_type="application/javascript")
+
+
+@app.get("/frontend-config.js", include_in_schema=False)
+def frontend_config() -> FileResponse:
+    return FileResponse(PROJECT_ROOT / "frontend-config.js", media_type="application/javascript")
 
 
 @app.get("/api/health")

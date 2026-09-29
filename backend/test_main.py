@@ -17,10 +17,12 @@ class WeatherApiTests(unittest.TestCase):
         os.environ["WEATHER_DATABASE_PATH"] = str(Path(cls.temp_dir.name) / "test.sqlite3")
         cls.previous_database_url = os.environ.get("DATABASE_URL")
         cls.previous_app_env = os.environ.get("APP_ENV")
+        cls.previous_frontend_origins = os.environ.get("FRONTEND_ORIGINS")
         os.environ["DATABASE_URL"] = (
             "sqlite:///" + Path(os.environ["WEATHER_DATABASE_PATH"]).as_posix()
         )
         os.environ["APP_ENV"] = "test"
+        os.environ["FRONTEND_ORIGINS"] = "https://dashboard.example.test"
         from main import app
 
         cls.client_context = TestClient(app)
@@ -39,6 +41,10 @@ class WeatherApiTests(unittest.TestCase):
             os.environ.pop("APP_ENV", None)
         else:
             os.environ["APP_ENV"] = cls.previous_app_env
+        if cls.previous_frontend_origins is None:
+            os.environ.pop("FRONTEND_ORIGINS", None)
+        else:
+            os.environ["FRONTEND_ORIGINS"] = cls.previous_frontend_origins
 
     def setUp(self):
         import main
@@ -89,6 +95,18 @@ class WeatherApiTests(unittest.TestCase):
             localhost_response.headers["access-control-allow-origin"],
             "http://localhost:5500",
         )
+
+    def test_configured_deployed_frontend_origin_is_allowed(self):
+        origin = "https://dashboard.example.test"
+        response = self.client.options(
+            "/api/summary",
+            headers={
+                "Origin": origin,
+                "Access-Control-Request-Method": "GET",
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.headers["access-control-allow-origin"], origin)
 
     def test_filters_and_analytics(self):
         filtered = self.client.get("/api/events", params={"event": "Flood", "state": "Bihar"})

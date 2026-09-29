@@ -2,6 +2,7 @@
 .venv-1/
 venv/
 venv-*/
+.render-frontend/
 __pycache__/
 *.pyc
 *.py[cod]

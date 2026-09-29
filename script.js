@@ -66,7 +66,7 @@ const mapLocations = {
 
 const API_BASE_URL = window.location.port === "5500"
     ? `${window.location.protocol}//${window.location.hostname}:8000`
-    : "";
+    : (window.API_BASE_URL || "");
 
 const mapElement = document.querySelector("#map");
 const eventsList = document.querySelector(".events-list");

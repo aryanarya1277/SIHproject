@@ -17,8 +17,11 @@ SIHproject/
     train_models.py        Model training and evaluation
     test_pipeline.py       Dataset-pipeline tests
   index.html               Dashboard
+  frontend-config.js       Local default API URL (empty for same-origin hosting)
   script.js                Dashboard behavior and API calls
   style.css                Dashboard styles
+  build_frontend.py        Builds an isolated Render static-site publish directory
+  render.yaml              Render API and frontend service definitions
   requirements.txt         Python dependencies
 ```
 
@@ -36,7 +39,7 @@ DATABASE_URL=postgresql://username:password@host:port/database
 ```
 
 Never commit real connection strings or credentials. `DATABASE_URL` is the only
-required application environment variable. PostgreSQL tables and indexes are
+required backend environment variable. PostgreSQL tables and indexes are
 created automatically on FastAPI startup.
 
 To preserve the existing local SQLite records, leave `backend/weather.db` in
@@ -86,8 +89,9 @@ folder open, open `http://127.0.0.1:5500/SIHproject/`; if VS Code has the
 listing at the bare port means Live Server is serving the parent folder, so
 open the project subfolder URL above. The dashboard detects port 5500 and sends
 API requests to FastAPI at port 8000. The backend allows browser API access
-only from `localhost:5500` and `127.0.0.1:5500`. Alternatively, skip Live Server
-and open the complete FastAPI-hosted dashboard at `http://127.0.0.1:8000`.
+from `localhost:5500`, `127.0.0.1:5500`, and any exact origins listed in
+`FRONTEND_ORIGINS`. Alternatively, skip Live Server and open the complete
+FastAPI-hosted dashboard at `http://127.0.0.1:8000`.
 
 ## API overview
 
@@ -211,20 +215,54 @@ sample records as live reports or classifier scores as verification.
 
 ## Deployment
 
-Deploy the FastAPI application on a Python 3.11+ host and provision PostgreSQL
-for that deployment. Configure `DATABASE_URL` in the host's encrypted
-environment-variable/secret settings; do not upload `.env` or add database
-credentials to source control. The application creates its tables when it
-starts, so the deployment start command is:
+The target architecture separates the static frontend, FastAPI API, and
+managed database:
 
-```sh
-uvicorn backend.main:app --host 0.0.0.0 --port "${PORT:-8000}"
+```text
+Browser → Render Static Site → Render FastAPI Web Service → Neon PostgreSQL
 ```
 
-Keep the database reachable from the backend host and follow the database
-provider's TLS/connection requirements. If the frontend is hosted on a
-different origin, configure that origin in the backend CORS allowlist before
-deployment; the current allowlist is for local VS Code Live Server.
+[render.yaml](./render.yaml) defines the Render static site and API web service.
+The static-site build publishes only the dashboard assets (not the backend,
+datasets, local database, or environment files) and generates its API base URL
+from the API service host. The API permits local Live Server origins plus the
+exact production origins supplied in `FRONTEND_ORIGINS`.
+
+### First deployment
+
+1. Create a Render Blueprint from this repository using
+   [render.yaml](./render.yaml). It creates `sihproject-api` and
+   `sihproject-frontend`.
+2. In the [Neon Console](https://console.neon.tech/), create a PostgreSQL
+   project and copy its pooled connection string including `sslmode=require`.
+   Set that value as the API service's secret `DATABASE_URL`; never commit it
+   or put it in a public file.
+3. Set the API service's `FRONTEND_ORIGINS` to the exact static-site origin
+   shown in Render (for example, `https://sihproject-frontend.onrender.com`).
+   For multiple domains, separate origins with commas. Do not include paths or
+   use a wildcard. Redeploy the API service after changing this setting.
+4. Verify the frontend loads, its API requests succeed, and the API's
+   `/api/health`, `/api/summary`, and `/docs` endpoints respond.
+
+The API creates its tables at startup. Keep `.env` local and private; the
+deployed API reads `DATABASE_URL` from Render's environment. Render's free web
+service may sleep while idle; the first request after inactivity can take
+longer. Neon hosts the database separately and persists it across web-service
+restarts.
+
+The existing single-service deployment at
+<https://sihproject-fbr0.onrender.com/> remains unchanged until the new
+Blueprint services are created and verified. The trained classifier artifacts
+are not included in the repository by default. Other dashboard features can
+deploy without them, but `/api/classify` requires generated model files under
+`datasets/models/`; make those artifacts available to the API build if needed.
+
+### Redeploying later
+
+Push code changes to the repository's deployment branch. Render rebuilds the
+static site and API according to their configured deploy settings. Keep the
+Neon connection string in the API service's environment settings; it should
+not change for ordinary code deployments.
 
 ## Tests
 
