@@ -224,7 +224,7 @@ Browser → Render Static Site → Render FastAPI Web Service → Neon PostgreSQ
 
 [render.yaml](./render.yaml) defines the Render static site and API web service.
 The existing Render API service is named `SIHproject`; the Blueprint adds only
-the static frontend and reads the API host from that existing service. The
+the static frontend and points it at the existing API's public URL. The
 static-site build publishes only the dashboard assets (not the backend,
 datasets, local database, or environment files). The API permits local Live
 Server origins plus the exact production origins supplied in

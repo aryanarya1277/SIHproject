@@ -6,7 +6,4 @@ services:
     staticPublishPath: .render-frontend
     envVars:
       - key: API_BASE_URL
-        fromService:
-          type: web
-          name: SIHproject
-          property: host
+        value: https://sihproject-fbr0.onrender.com
